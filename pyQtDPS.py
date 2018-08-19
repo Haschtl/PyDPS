@@ -3,6 +3,7 @@ import json
 # import os
 import sys
 import subprocess
+import time
 
 try:
 	from PyQt5 import uic
@@ -56,8 +57,14 @@ class PyQtDPS(QtWidgets.QMainWindow):
         
         self.setButton.clicked.connect(self.setValues)
         self.powerButton.clicked.connect(self.togglePower)
-        
-        a=self.power_supply.read_registers(0,11) #read data from power supply
+        ok = False
+        while not ok:
+            try:
+                a=self.power_supply.read_registers(0,11) #read data from power supply
+                ok = True
+            except:
+                print("Instrument not initialized yet")
+                time.sleep(1)
         self.voltageSpinBox.setValue(a[0]/100) # U-set x100 (R/W)
         self.ampSpinBox.setValue(a[1]/100) # I-set x100 (R/W)
         self.show()
