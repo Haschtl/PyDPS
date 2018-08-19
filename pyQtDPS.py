@@ -1,6 +1,6 @@
 # Python3.6
 import json
-# import os
+import os
 import sys
 import subprocess
 import time
@@ -36,11 +36,16 @@ class PyQtDPS(QtWidgets.QMainWindow):
         uic.loadUi("dpsGUI.ui", self)
         self.config = load_config()
 		
-        print("Initializing USB or Bluetooth communication")
-        try:
-            self.process = subprocess.Popen(self.config["dev_init_command"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-        except:
-            sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify 'dev_init_command' in config.json")
+        if not os.path.exists(config["dev_path"]):
+            print("Initializing USB or Bluetooth communication")
+            try:
+                self.process = subprocess.Popen(self.config["dev_init_command"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+            except:
+                sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify 'dev_init_command' in config.json")
+        print("Setting permissions to access device")
+        ok = subprocess.Popen("sudo chmod +rwx "+config["dev_path"])
+        if ok != 0:
+            sys.exit("\nERROR\nCould not set read/write permissions for "+config["dev_path"])
         try:
             self.power_supply = minimalmodbus.Instrument(self.config["dev_path"], 1)
             self.power_supply.serial.baudrate = self.config["serial_baudrate"]

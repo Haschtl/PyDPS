@@ -1,5 +1,5 @@
 {
-	"dev_init_command": "sudo rfcomm connect rfcomm0 00:BA:55:89:13:49 && sudo chmod +rwx /dev/rfcomm0",
+	"dev_init_command": "sudo rfcomm connect rfcomm0 00:BA:55:89:13:49",
 	"dev_path": "/dev/rfcomm0",
 	"serial_baudrate": 9600,
 	"serial_bytesize": 8,
