@@ -43,7 +43,7 @@ class PyQtDPS(QtWidgets.QMainWindow):
             except:
                 sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify 'dev_init_command' in config.json")
         print("Setting permissions to access device")
-        ok = subprocess.Popen("sudo chmod +rwx "+config["dev_path"])
+        ok = os.system("sudo chmod +rwx "+config["dev_path"])
         if ok != 0:
             sys.exit("\nERROR\nCould not set read/write permissions for "+config["dev_path"])
         try:
