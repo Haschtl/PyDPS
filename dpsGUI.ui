@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DPS5020</string>
+   <string>PyQtDPS</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolTip

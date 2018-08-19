@@ -1,12 +1,21 @@
-from PyQt5 import QtCore
-from PyQt5 import uic
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-import pyqtgraph as pg
+# Python3.6
+import json
+import os
 import sys
 
-import minimalmodbus
-import time
+try:
+	from PyQt5 import uic
+	from PyQt5 import QtWidgets
+	from PyQt5 import QtCore
+except ImportError:
+	sys.exit("\nERROR\nPyQt5 for Python3 not found! \nPlease install with 'pip3 install pyqt5\nOr apt install python3-pyqt5")
+	
+try:
+	import minimalmodbus
+except ImportError:
+	sys.exit("\nERROR\nminimalmodbus for Python3 not found!\nPlease install with 'pip3 install minimalmodbus'")
+
+
 
 stopMe = False
 
@@ -14,21 +23,27 @@ class Updater(QtCore.QThread):
     received = QtCore.pyqtSignal()
 
     def run(self):
+        config = load_config()
         while not stopMe:
-            self.sleep(1)
+            self.sleep(config["update_rate"])
             self.received.emit()
             
 class PyQtDPS(QtWidgets.QMainWindow):
     def __init__(self):
         super(PyQtDPS, self).__init__()
         uic.loadUi("dpsGUI.ui", self)
-        
-        self.power_supply = minimalmodbus.Instrument('/dev/rfcomm0', 1)
-        self.power_supply.serial.baudrate = 9600
-        self.power_supply.serial.bytesize = 8
-        self.power_supply.serial.timeout = 2
-        self.power_supply.mode = minimalmodbus.MODE_RTU
-        
+        self.config = load_config()
+		
+        try:
+            self.power_supply = minimalmodbus.Instrument(self.config["dev_path"], 1)
+            self.power_supply.serial.baudrate = self.config["serial_baudrate"]
+            self.power_supply.serial.bytesize = self.config["serial_bytesize"]
+            self.power_supply.serial.timeout = self.config["serial_timeout"]
+            self.power_supply.mode = minimalmodbus.MODE_RTU
+        except:
+            self.closeWindow()
+            sys.exit("\nERROR\nFailed to initialize minimalmodbus instrument!\nPlease check serial-settings in config.json")
+        print("Starting thread to update GUI-values")
         self.updater = Updater(self)
         self.updater.received.connect(self.refresh)
         self.updater.start()
@@ -43,23 +58,25 @@ class PyQtDPS(QtWidgets.QMainWindow):
         
     def togglePower(self):
         try :
+            print("Changing power-state")
             onoff=self.power_supply.read_register(9)
             # self.powerButton.setChecked(bool(onoff))
             self.power_supply.write_register(9,(1-onoff))
         except :
-            print ("write_error")
+            print ("\nERROR\nChanging power-state failed!\n")
             
     def setValues(self):
         try :
+            print("Setting output values")
             volt = self.voltageSpinBox.value()
             amp = self.ampSpinBox.value()
             self.power_supply.write_register(0,volt*100)
             self.power_supply.write_register(1,amp*100)
         except :
-            print ("write_error")
+            print ("\nERROR\nSetting output values failed!\n")
             
     def refresh(self):
-       # try :
+        try :
             a=self.power_supply.read_registers(0,11) #read data from power supply
             #a[0] U-set x100 (R/W)
             #a[1] I-set x100 (R/W)
@@ -89,18 +106,31 @@ class PyQtDPS(QtWidgets.QMainWindow):
                 self.ampSpinBox.setStyleSheet("background-color: green")
             else:
                 self.ampSpinBox.setStyleSheet("background-color: red")
-        # except :
-        #    print("read error")
+        except :
+            print("\nERROR\nRefreshing GUI-values failed!\n")
             
     def closeEvent(self, event):
+        self.closeWindow()
+
+    def closeWindow(self):
+        print("Closing PyQtDPS")
         global stopMe
         stopMe = True
         self.running = False
         self.close()
         
+def load_config(path="config.json"):
+    with open(path, encoding="UTF-8") as jsonfile:
+        config = json.load(jsonfile, encoding="UTF-8")
+    return config
+	
 if __name__ == "__main__":
+    # Initialize device
+    config = load_config()
+    print("Initializing USB or Bluetooth communication")
+    ok = os.system(config["dev_init_command"])
+    if ok != 0:
+        sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify the command in config.json")
     app = QtWidgets.QApplication(sys.argv)
     myapp = PyQtDPS()
-    #self.stylesheet = pyqtlib.loadStyleSheet('data/ui/darkmode.html')
-    #myapp.setStyleSheet(self.stylesheet)
     app.exec_()
