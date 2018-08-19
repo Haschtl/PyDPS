@@ -37,7 +37,7 @@ class PyQtDPS(QtWidgets.QMainWindow):
 		
         print("Initializing USB or Bluetooth communication")
         try:
-            self.process = subprocess.Popen(self.config["dev_init_command"])
+            self.process = subprocess.Popen(self.config["dev_init_command"], shell=True)
         except:
             sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify 'dev_init_command' in config.json")
         try:
