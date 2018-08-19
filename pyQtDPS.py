@@ -35,6 +35,10 @@ class PyQtDPS(QtWidgets.QMainWindow):
         
         self.setButton.clicked.connect(self.setValues)
         self.powerButton.clicked.connect(self.togglePower)
+        
+        a=self.power_supply.read_registers(0,11) #read data from power supply
+        self.voltageSpinBox.setValue(a[0]/100) # U-set x100 (R/W)
+        self.ampSpinBox.setValue(a[1]/100) # I-set x100 (R/W)
         self.show()
         
     def togglePower(self):
