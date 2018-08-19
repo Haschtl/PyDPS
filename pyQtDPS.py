@@ -1,7 +1,8 @@
 # Python3.6
 import json
-import os
+# import os
 import sys
+import subprocess
 
 try:
 	from PyQt5 import uic
@@ -34,6 +35,11 @@ class PyQtDPS(QtWidgets.QMainWindow):
         uic.loadUi("dpsGUI.ui", self)
         self.config = load_config()
 		
+        print("Initializing USB or Bluetooth communication")
+        try:
+            self.process = subprocess.Popen(self.config["dev_init_command"])
+        except:
+            sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify 'dev_init_command' in config.json")
         try:
             self.power_supply = minimalmodbus.Instrument(self.config["dev_path"], 1)
             self.power_supply.serial.baudrate = self.config["serial_baudrate"]
@@ -117,6 +123,7 @@ class PyQtDPS(QtWidgets.QMainWindow):
         global stopMe
         stopMe = True
         self.running = False
+        self.process.kill()
         self.close()
         
 def load_config(path="config.json"):
@@ -127,10 +134,6 @@ def load_config(path="config.json"):
 if __name__ == "__main__":
     # Initialize device
     config = load_config()
-    print("Initializing USB or Bluetooth communication")
-    ok = os.system(config["dev_init_command"])
-    if ok != 0:
-        sys.exit("\nERROR\nSystem command from config.json exited with an error. \nPlease modify the command in config.json")
     app = QtWidgets.QApplication(sys.argv)
     myapp = PyQtDPS()
     app.exec_()
