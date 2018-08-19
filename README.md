@@ -18,3 +18,5 @@ Linux GUI for all DPS variable power supplies with USB or Bluetooth connection.
 - You may need to run as root for read/write privileges:
 
 > sudo python3 pyQtDPS.py
+
+![Screenshot](screenshot.png)
