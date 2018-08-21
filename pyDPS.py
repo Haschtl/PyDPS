@@ -47,9 +47,9 @@ class UpdaterFast(QtCore.QThread):
             self.received.emit()
             
             
-class PyQtDPS(QtWidgets.QMainWindow):
+class PyDPS(QtWidgets.QMainWindow):
     def __init__(self):
-        super(PyQtDPS, self).__init__()
+        super(PyDPS, self).__init__()
         if not plotEnabled:
             self.plotButton.hide()
         uic.loadUi("dpsGUI.ui", self)
@@ -295,5 +295,5 @@ if __name__ == "__main__":
     # Initialize device
     config = load_config()
     app = QtWidgets.QApplication(sys.argv)
-    myapp = PyQtDPS()
+    myapp = PyDPS()
     app.exec_()
