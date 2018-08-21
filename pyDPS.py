@@ -233,6 +233,8 @@ class PyDPS(QtWidgets.QMainWindow):
     def initPlotWindow(self):
         pg.setConfigOption('background', (49, 54, 59))
         self.plotDialog = QtWidgets.QDialog()
+        app_icon = QtGui.QIcon("icon.png")
+        self.plotDialog.setWindowIcon(app_icon)
         layout = QtWidgets.QVBoxLayout(self.plotDialog)
         self.plotWidget = pg.PlotWidget()
         ax = self.plotWidget.getAxis('bottom')  # This is the trick
