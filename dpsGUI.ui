@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>PyDPS</class>
+ <widget class="QMainWindow" name="PyDPS">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
+    <width>712</width>
     <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PyQtDPS</string>
+   <string>PyDPS</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolTip
@@ -1347,6 +1347,21 @@ QMessageBox {
      <number>0</number>
     </property>
     <item>
+     <widget class="QLabel" name="label_8">
+      <property name="font">
+       <font>
+        <pointsize>31</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Not connected</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -1594,6 +1609,9 @@ QMessageBox {
          <widget class="QPushButton" name="plotButton">
           <property name="text">
            <string>Plot</string>
+          </property>
+          <property name="default">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
