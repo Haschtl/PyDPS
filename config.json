@@ -4,5 +4,8 @@
 	"serial_baudrate": 9600,
 	"serial_bytesize": 8,
 	"serial_timeout": 2,
-	"update_rate": 1
+	"update_rate": 1,
+	"maxAmps":20,
+	"plotLength":120,
+	"plot_update_rate":1
 }
