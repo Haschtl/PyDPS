@@ -8,8 +8,9 @@ Linux GUI for all DPS variable power supplies with USB or Bluetooth connection.
 
 ## HowTo
 - Modify config.json:
-	- "dev_init_command": OS-Command to connect to device and set read/write privileges if needed
+	- "dev_init_command": OS-Command to connect to device
 		- You will need your Device-MAC-Adress for bluetooth connection
+		- If you're using USB, you may leave this blank and just set the correct "dev_path". This may vary for different linux distributions
 	- "dev_path": Set directory, where the device is mounted
 	- Leave anything else (you can change "update_rate", which sets GUI-update-rate)
 - Run the following command:
